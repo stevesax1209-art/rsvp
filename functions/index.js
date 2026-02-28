@@ -7,12 +7,13 @@ const { logger } = require('firebase-functions');
 const mailerLiteApiKey = defineSecret('MAILERLITE_API_KEY');
 
 // Optional: map each event value to a MailerLite group ID for segmentation.
+// Keys must match the <option value="..."> strings in public/index.html.
 // Fill in your group IDs from the MailerLite dashboard (Subscribers → Groups).
 const EVENT_GROUP_IDS = {
-  'Cleveland Symposium - April 18, 2026': '180251083036166100',
-  'Phoenix WPC Hospitality Suite - May 25, 2026': '180251214422737963',
-  'Collingwood Conference - June 7, 2026': '180251239077906214',
-  'Baton Rouge Conference - July 25, 2026': '180251255757604767',
+  'Cleveland - April 18': '180251083036166100',
+  'Phoenix - May 25': '180251214422737963',
+  'Collingwood - June 7': '180251239077906214',
+  'Baton Rouge - July 25': '180251255757604767',
 };
 
 exports.rsvp = onRequest({ secrets: [mailerLiteApiKey], invoker: "public" }, async (req, res) => {
@@ -52,13 +53,20 @@ exports.rsvp = onRequest({ secrets: [mailerLiteApiKey], invoker: "public" }, asy
         payload.groups = [groupId];
     }
 
+    const apiKey = mailerLiteApiKey.value();
+    if (!apiKey) {
+        logger.error('MAILERLITE_API_KEY secret is not configured');
+        res.status(500).json({ error: 'Server configuration error' });
+        return;
+    }
+
     try {
         const mlRes = await fetch('https://connect.mailerlite.com/api/subscribers', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept':        'application/json',
-                'Authorization': `Bearer ${mailerLiteApiKey.value()}`,
+                'Authorization': `Bearer ${apiKey}`,
             },
             body: JSON.stringify(payload),
         });
