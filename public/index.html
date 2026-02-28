@@ -621,7 +621,7 @@
 
             try {
                 // The API key lives in the server-side Firebase Function — never exposed here.
-                const response = await fetch('https://rsvp-604118853759.us-central1.run.app', {
+                const response = await fetch('/api/rsvp', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, firstName, lastName, event }),
