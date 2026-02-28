@@ -15,7 +15,7 @@ const EVENT_GROUP_IDS = {
   'Baton Rouge Conference - July 25, 2026': '180251255757604767',
 };
 
-exports.rsvp = onRequest({ secrets: [mailerLiteApiKey] }, async (req, res) => {
+exports.rsvp = onRequest({ secrets: [mailerLiteApiKey], invoker: "public" }, async (req, res) => {
     // Allow requests from the hosting origin
     res.set('Access-Control-Allow-Origin', '*');
 
