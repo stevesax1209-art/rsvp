@@ -1,0 +1,15 @@
+# Firebase
+.firebase/
+.firebaserc.local
+
+# Functions — secret files (never commit)
+functions/.env
+functions/.secret.local
+
+# Node modules
+functions/node_modules/
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*

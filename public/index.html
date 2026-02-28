@@ -569,34 +569,6 @@
     </footer>
 
     <script>
-        // ---------------------------------------------------------------
-        // MailerLite API configuration
-        // Replace the value below with your MailerLite API key.
-        // You can find it in your MailerLite dashboard under
-        // Integrations → Developer API.
-        //
-        // ⚠️  SECURITY NOTE: Embedding an API key in a public HTML file
-        // exposes it to anyone who views the page source. For production use,
-        // consider one of these safer alternatives:
-        //   1. Use MailerLite's own Embedded Form builder (Forms → Embedded)
-        //      which generates a key-free snippet you can paste directly.
-        //   2. Proxy requests through a server-side function (e.g. a Netlify
-        //      Function, Vercel Edge Function, or your own backend) so the key
-        //      never reaches the browser.
-        // ---------------------------------------------------------------
-        const MAILERLITE_API_KEY = 'YOUR_MAILERLITE_API_KEY';
-
-        // Optional: map each event value to a specific MailerLite group ID
-        // so registrants are automatically segmented by event.
-        // Leave a value as null to skip group assignment for that event.
-        const EVENT_GROUP_IDS = {
-            'Cleveland - April 18':  null, // e.g. '123456789'
-            'Phoenix - May 25':      null,
-            'Collingwood - June 7':  null,
-            'Baton Rouge - July 25': null,
-        };
-        // ---------------------------------------------------------------
-
         const form       = document.getElementById('rsvpForm');
         const submitBtn  = document.getElementById('submitBtn');
         const successMsg = document.getElementById('successMessage');
@@ -605,68 +577,43 @@
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            const name  = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const event = document.getElementById('event').value;
+            const fullName = document.getElementById('name').value.trim();
+            const email    = document.getElementById('email').value.trim();
+            const event    = document.getElementById('event').value;
 
             // Split name into first / last for MailerLite's standard fields
-            const nameParts = name.split(' ');
+            const nameParts = fullName.split(' ');
             const firstName = nameParts[0] || '';
             const lastName  = nameParts.slice(1).join(' ') || '';
 
-            // Build subscriber payload
-            const payload = {
-                email,
-                fields: {
-                    name:      firstName,
-                    last_name: lastName,
-                    rsvp_event: event,
-                },
-                groups: [],
-            };
-
-            // Attach to a MailerLite group when a group ID is configured
-            const groupId = EVENT_GROUP_IDS[event];
-            if (groupId) {
-                payload.groups.push(groupId);
-            }
-
-            // Disable the button while the request is in flight
-            submitBtn.disabled = true;
+            submitBtn.disabled    = true;
             submitBtn.textContent = 'Saving…';
             successMsg.classList.remove('show');
             errorMsg.classList.remove('show');
 
             try {
-                const response = await fetch('https://connect.mailerlite.com/api/subscribers', {
+                // The API key lives in the server-side Firebase Function — never exposed here.
+                const response = await fetch('/api/rsvp', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'Authorization': `Bearer ${MAILERLITE_API_KEY}`,
-                    },
-                    body: JSON.stringify(payload),
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, firstName, lastName, event }),
                 });
 
                 if (response.ok) {
-                    // Success – show confirmation and reset the form
                     successMsg.classList.add('show');
                     successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     form.reset();
-
-                    setTimeout(() => {
-                        successMsg.classList.remove('show');
-                    }, 8000);
+                    setTimeout(() => successMsg.classList.remove('show'), 8000);
                 } else {
                     const data = await response.json().catch(() => ({}));
-                    console.error('MailerLite API error:', response.status, data);
+                    console.error('RSVP error:', response.status, data);
                     showError();
                 }
             } catch (err) {
                 console.error('Network error submitting RSVP:', err);
                 showError();
             } finally {
-                submitBtn.disabled = false;
+                submitBtn.disabled    = false;
                 submitBtn.textContent = 'Save My Seat';
             }
         });
@@ -674,9 +621,7 @@
         function showError() {
             errorMsg.classList.add('show');
             errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            setTimeout(() => {
-                errorMsg.classList.remove('show');
-            }, 8000);
+            setTimeout(() => errorMsg.classList.remove('show'), 8000);
         }
 
         // Smooth scroll for internal anchor links
@@ -684,9 +629,7 @@
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         });
     </script>

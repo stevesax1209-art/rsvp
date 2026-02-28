@@ -1,0 +1,13 @@
+{
+  "name": "rsvp-functions",
+  "version": "1.0.0",
+  "description": "Firebase Function — server-side proxy to MailerLite API",
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-functions": "^7.0.6"
+  },
+  "private": true
+}
