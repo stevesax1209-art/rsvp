@@ -9,10 +9,10 @@ const mailerLiteApiKey = defineSecret('MAILERLITE_API_KEY');
 // Optional: map each event value to a MailerLite group ID for segmentation.
 // Fill in your group IDs from the MailerLite dashboard (Subscribers → Groups).
 const EVENT_GROUP_IDS = {
-    'Cleveland - April 18':  null, // e.g. '123456789'
-    'Phoenix - May 25':      null,
-    'Collingwood - June 7':  null,
-    'Baton Rouge - July 25': null,
+  'Cleveland Symposium - April 18, 2026': '180251083036166100',
+  'Phoenix WPC Hospitality Suite - May 25, 2026': '180251214422737963',
+  'Collingwood Conference - June 7, 2026': '180251239077906214',
+  'Baton Rouge Conference - July 25, 2026': '180251255757604767',
 };
 
 exports.rsvp = onRequest({ secrets: [mailerLiteApiKey] }, async (req, res) => {
