@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Firebase Function — server-side proxy to MailerLite API",
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "main": "index.js",
   "dependencies": {
