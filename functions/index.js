@@ -53,7 +53,7 @@ exports.rsvp = onRequest({ secrets: [mailerLiteApiKey], invoker: "public" }, asy
         payload.groups = [groupId];
     }
 
-    const apiKey = mailerLiteApiKey.value();
+    const apiKey = mailerLiteApiKey.value().trim();
     if (!apiKey) {
         logger.error('MAILERLITE_API_KEY secret is not configured');
         res.status(500).json({ error: 'Server configuration error' });
